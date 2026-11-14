@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Курьерская доставка — прототип</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #20242b; background: #f3f5f7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 980px); }
+    .card { overflow: hidden; background: #fff; border: 1px solid #e3e7eb; border-radius: 20px; box-shadow: 0 18px 55px #26313d12; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; }
+    h1 { margin: 0 0 4px; font-size: clamp(20px, 3vw, 27px); letter-spacing: -.04em; }
+    .sub { color: #68717d; font-size: 14px; }
+    .score { border-radius: 12px; padding: 10px 14px; background: #fff4e6; color: #a85400; font-weight: 750; white-space: nowrap; }
+    .stats { display: flex; align-items: center; gap: 8px; }
+    .complaints { border-radius: 12px; padding: 10px 12px; background: #fff0ef; color: #a52d2d; font-weight: 750; white-space: nowrap; }
+    canvas { display: block; width: 100%; height: auto; background: #dcebf5; }
+    .controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 24px 22px; }
+    #message { color: #4e5864; line-height: 1.4; }
+    .actions { display: flex; align-items: center; justify-content: flex-end; gap: 9px; flex-wrap: wrap; }
+    .choices { display: flex; align-items: center; justify-content: flex-end; gap: 9px; flex-wrap: wrap; }
+    button { border: 0; border-radius: 12px; padding: 12px 19px; background: #f28c00; color: white; font: inherit; font-weight: 750; cursor: pointer; box-shadow: 0 4px 10px #f28c0030; }
+    button:hover { background: #dc7e00; }
+    .choices button { background: #33485d; box-shadow: none; }
+    .choices button:hover { background: #263949; }
+    .choices .choice-yes { background: #e98200; }
+    .choices .choice-yes:hover { background: #cc7200; }
+    button:focus-visible { outline: 3px solid #252a30; outline-offset: 3px; }
+    @media (max-width: 560px) { body { padding: 12px; } header, .controls { padding-left: 16px; padding-right: 16px; } .controls { align-items: stretch; flex-direction: column; } .actions, .choices { width: 100%; } .actions button, .choices button { flex: 1; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <div><h1>Курьер на маршруте</h1><div class="sub">Небольшой игровой прототип · один персонаж</div></div>
+      <div class="stats"><div class="score" id="score">Очки: 0</div><div class="complaints" id="complaints">Жалобы: 0</div></div>
+    </header>
+    <canvas id="game" width="960" height="440" aria-label="Машинка едет по улице и доставляет посылки"></canvas>
+    <div class="controls">
+      <div id="message" aria-live="polite">Нажми «Начать маршрут», чтобы отправиться на доставку.</div>
+      <div class="actions">
+        <button id="action">Начать маршрут</button>
+        <div id="choices" class="choices" hidden></div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const canvas = document.querySelector('#game');
+    const ctx = canvas.getContext('2d');
+    const action = document.querySelector('#action');
+    const choices = document.querySelector('#choices');
+    const message = document.querySelector('#message');
+    const scoreLabel = document.querySelector('#score');
+    const complaintsLabel = document.querySelector('#complaints');
+    const W = canvas.width, H = canvas.height;
+    const COURIER_WIDTH = 62;
+    const COURIER_HEIGHT = 88;
+    const COURIER_SIDEWALK_BASELINE = 330;
+    const COURIER_SIDEWALK_TOP = COURIER_SIDEWALK_BASELINE - COURIER_HEIGHT;
+    const game = { state: 'ready', x: 20, travel: 0, cityOffset: 0, score: 0, delivered: 0, complaints: 0, scenarios: [], person: 0, parcel: 0, stop: 0, last: 0 };
+    const truckSprite = new Image();
+    truckSprite.src = 'assets/trans-o-flex-truck.png';
+    const citySprite = new Image();
+    citySprite.src = 'assets/city-street-background.png';
+    const courierSprite = new Image();
+    courierSprite.src = 'assets/courier-colleague-1.png';
+    const stops = [
+      { house: '12', points: 10, result: 'Посылка вручена у дома 12.' },
+      { house: '24', points: 15, result: 'Быстрая доставка у дома 24!' },
+      { house: '38', points: 10, result: 'Посылка вручена у дома 38.' },
+      { house: '51', points: 20, result: 'Бонус за последнюю доставку у дома 51!' }
+    ];
+
+    function roundRect(c, x, y, w, h, r, fill, stroke) {
+      c.beginPath(); c.roundRect(x, y, w, h, r);
+      if (fill) { c.fillStyle = fill; c.fill(); }
+      if (stroke) { c.strokeStyle = stroke; c.lineWidth = 2; c.stroke(); }
+    }
+    function drawVan(x) {
+      // Faithful sprite generated from the supplied truck photo.
+      if(truckSprite.complete&&truckSprite.naturalWidth) ctx.drawImage(truckSprite,x-20,235,420,210);
+    }
+    function drawPerson(x, y, carrying) {
+      if(courierSprite.complete&&courierSprite.naturalWidth){
+        ctx.fillStyle='rgba(24,28,31,.18)';ctx.beginPath();ctx.ellipse(x,y+COURIER_HEIGHT-2,13,2.5,0,0,Math.PI*2);ctx.fill();
+        ctx.drawImage(courierSprite,x-COURIER_WIDTH/2,y,COURIER_WIDTH,COURIER_HEIGHT);
+        if(carrying){
+          roundRect(ctx,x+13,y+25,22,20,2,'#b88654','#765534');
+          ctx.strokeStyle='#e4c89d';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+24,y+26);ctx.lineTo(x+24,y+44);ctx.moveTo(x+14,y+35);ctx.lineTo(x+34,y+35);ctx.stroke();
+        }
+      }
+    }
+    function draw() {
+      ctx.fillStyle='#b9c5cc';ctx.fillRect(0,0,W,H);
+      if(citySprite.complete&&citySprite.naturalWidth){
+        const sceneWidth=H*citySprite.naturalWidth/citySprite.naturalHeight;
+        const maxPan=Math.max(0,sceneWidth-W);
+        const travelProgress=game.travel>0?120-game.travel:0;
+        const pan=Math.min(game.cityOffset+travelProgress,maxPan);
+        ctx.drawImage(citySprite,-pan,0,sceneWidth,H);
+      }
+      const stop=stops[Math.min(game.stop,stops.length-1)];
+      if(game.packageAtDoor){roundRect(ctx,784,294,22,20,3,'#b88654','#765534');ctx.strokeStyle='#e4c89d';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(795,295);ctx.lineTo(795,313);ctx.moveTo(785,304);ctx.lineTo(805,304);ctx.stroke();}
+      if(game.state==='delivery') drawPerson(game.person,game.personY||291,game.parcel>0);
+      drawVan(game.x);
+      if(game.state==='home-choice'||game.state==='door-choice'||game.state==='neighbor-choice'||game.state==='delivery') { roundRect(ctx,740,119,116,29,14,'#fff');ctx.fillStyle='#47515b';ctx.font='700 14px system-ui';ctx.textAlign='center';ctx.fillText('ДОМ '+stop.house,798,139); }
+      if(game.popUntil&&performance.now()<game.popUntil){const life=(game.popUntil-performance.now())/1200;ctx.globalAlpha=Math.min(1,life*1.5);ctx.fillStyle=game.scoreDelta<0?'#c62828':game.scoreDelta===0?'#53616b':'#168449';ctx.font='800 25px system-ui';ctx.textAlign='center';ctx.fillText(game.scorePop||'+10 очков',800,213-(1-life)*24);ctx.globalAlpha=1;}
+      requestAnimationFrame(draw);
+    }
+    function showAction(label, disabled=false) {
+      action.hidden=false;action.disabled=disabled;action.textContent=label;
+      choices.hidden=true;choices.replaceChildren();
+    }
+    function showChoices(options) {
+      action.hidden=true;choices.hidden=false;choices.replaceChildren();
+      for(const option of options){
+        const button=document.createElement('button');button.type='button';button.textContent=option.label;
+        if(option.primary)button.classList.add('choice-yes');
+        button.addEventListener('click',option.onSelect);choices.append(button);
+      }
+    }
+    function createScenarios() {
+      const scenarios=stops.map((_,i)=>({
+        home:i===0?true:i===1||i===2?false:Math.random()<.45,
+        doorAllowed:Math.random()<.5,
+        neighborPresent:Math.random()<.75,
+        neighborAllowed:Math.random()<.5
+      }));
+      // The two guaranteed empty homes offer opposite outcomes, so the route
+      // includes both a possible reward and a possible complaint.
+      const doorFirst=Math.random()<.5;
+      const neighborFirst=Math.random()<.5;
+      scenarios[1].doorAllowed=doorFirst;scenarios[2].doorAllowed=!doorFirst;
+      scenarios[1].neighborPresent=true;scenarios[2].neighborPresent=true;
+      scenarios[1].neighborAllowed=neighborFirst;scenarios[2].neighborAllowed=!neighborFirst;
+      return scenarios;
+    }
+    function askAtStop() {
+      const scenario=game.scenarios[game.stop];
+      if(scenario.home){
+        game.state='home-choice';
+        message.textContent=`Клиент дома. Вручить посылку лично?`;
+        showChoices([
+          {label:'Да, вручить',primary:true,onSelect:()=>startCourierDelivery('home')},
+          {label:'Нет, забрать обратно',onSelect:()=>returnSafely('Ты решил не вручать посылку. Забрал её обратно в машину.')}
+        ]);
+      }else{
+        game.state='door-choice';
+        message.textContent='Дома никого нет. Оставить посылку у двери? Решение на твоей совести: клиент может быть доволен или пожаловаться.';
+        showChoices([
+          {label:'Да, оставить',primary:true,onSelect:()=>startCourierDelivery('door')},
+          {label:'Нет',onSelect:askNeighbor}
+        ]);
+      }
+    }
+    function askNeighbor() {
+      game.state='neighbor-choice';
+      message.textContent='Передать посылку соседу? Он может принять её, но клиент не всегда этому рад.';
+      showChoices([
+        {label:'Да, попробовать',primary:true,onSelect:()=>startCourierDelivery('neighbor')},
+        {label:'Нет, забрать обратно',onSelect:()=>returnSafely('Ты решил не рисковать и забрал посылку обратно.')}
+      ]);
+    }
+    function begin() {
+      game.score=0;game.delivered=0;game.complaints=0;game.scoreDelta=0;game.stop=0;game.x=20;game.travel=0;game.cityOffset=0;game.packageAtDoor=false;game.scenarios=createScenarios();game.state='driving';game.last=performance.now();
+      scoreLabel.textContent='Очки: 0';complaintsLabel.textContent='Жалобы: 0';message.textContent='Едем по маршруту…';showAction('Машинка едет',true);
+      requestAnimationFrame(tick);
+    }
+    function tick(now) {
+      if(game.state!=='driving')return;
+      const dt=Math.min((now-game.last)/1000,.05);game.last=now;
+      if(game.travel>0){
+        game.travel=Math.max(0,game.travel-120*dt);
+        if(game.travel===0){game.cityOffset=Math.min(game.cityOffset+120,360);askAtStop();return;}
+        requestAnimationFrame(tick);return;
+      }
+      game.x+=125*dt;
+      if(game.x>=290){game.x=290;askAtStop();return;}
+      requestAnimationFrame(tick);
+    }
+    function startCourierDelivery(method) {
+      game.state='delivery';game.deliveryMethod=method;game.packageAtDoor=false;
+      game.person=game.x+390;game.personY=COURIER_SIDEWALK_TOP;game.parcel=1;game.carryBack=false;
+      message.textContent=method==='home'?'Курьер вручает посылку клиенту…':method==='door'?'Ты решил оставить посылку у двери…':'Курьер несёт посылку соседу…';
+      showAction('Идёт доставка',true);
+      const start=performance.now();
+      function walk(now){
+        const t=Math.min((now-start)/1100,1);game.person=game.x+390+(t*132);game.personY=COURIER_SIDEWALK_TOP;
+        if(t<1)requestAnimationFrame(walk);else completeDelivery();
+      }
+      requestAnimationFrame(walk);
+    }
+    function completeDelivery() {
+      const scenario=game.scenarios[game.stop];
+      let points=0,result='',delivered=false;
+      if(game.deliveryMethod==='home'){
+        points=stops[game.stop].points;result='Клиент принял посылку. Отличная доставка!';delivered=true;
+      }else if(game.deliveryMethod==='door'){
+        game.packageAtDoor=true;delivered=true;
+        if(scenario.doorAllowed){points=12;result='Клиенту понравилось, что ты оставил посылку у двери.';}
+        else{points=-12;result='Клиент пожаловался: оставлять посылку у двери было нельзя.';game.complaints++;}
+      }else if(game.deliveryMethod==='neighbor'){
+        if(!scenario.neighborPresent){points=0;result='Соседа не оказалось. Посылка вернулась в машину.';}
+        else if(scenario.neighborAllowed){points=8;result='Сосед принял посылку, клиент остался доволен.';delivered=true;}
+        else{points=-8;result='Сосед принял посылку, но клиент пожаловался.';game.complaints++;delivered=true;}
+      }
+      game.carryBack=!delivered;game.parcel=game.carryBack?1:0;if(delivered)game.delivered++;
+      game.score+=points;game.scoreDelta=points;scoreLabel.textContent=`Очки: ${game.score}`;complaintsLabel.textContent=`Жалобы: ${game.complaints}`;
+      game.scorePop=`${points>0?'+':''}${points} очков`;game.popUntil=performance.now()+1400;
+      message.textContent=`${result} ${points>0?'+':''}${points} очков.`;
+      showAction('Курьер возвращается',true);
+      setTimeout(returnToVan,900);
+    }
+    function returnSafely(result) {
+      game.state='returning';game.packageAtDoor=false;game.parcel=0;game.score+=2;game.scoreDelta=2;
+      scoreLabel.textContent=`Очки: ${game.score}`;complaintsLabel.textContent=`Жалобы: ${game.complaints}`;game.scorePop='+2 очка';game.popUntil=performance.now()+1200;
+      message.textContent=`${result} +2 очка за осторожное решение.`;showAction('Посылка в машине',true);
+      setTimeout(advanceRoute,900);
+    }
+    function returnToVan(){
+      const start=performance.now(),from=game.person;
+      function walk(now){const t=Math.min((now-start)/950,1);game.person=from-(t*132);game.parcel=game.carryBack?1:0;if(t<1)requestAnimationFrame(walk);else{game.parcel=0;game.carryBack=false;advanceRoute();}}
+      requestAnimationFrame(walk);
+    }
+    function advanceRoute(){
+      game.stop++;
+      if(game.stop>=stops.length){
+        game.state='done';message.textContent=`Маршрут завершён: ${game.delivered} доставок, ${game.complaints} жалоб, ${game.score} очков.`;showAction('Сыграть ещё раз');
+      }else{
+        game.state='driving';game.packageAtDoor=false;game.x=290;game.travel=120;
+        message.textContent='Едем к следующему адресу…';showAction('Едем к следующему дому',true);game.last=performance.now();requestAnimationFrame(tick);
+      }
+    }
+    function deliver() {
+      if(game.state==='ready'||game.state==='done')begin();
+    }
+    action.addEventListener('click',deliver);
+    window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!action.hidden&&!action.disabled){e.preventDefault();deliver();}});
+    draw();
+  </script>
+</body>
+</html>
