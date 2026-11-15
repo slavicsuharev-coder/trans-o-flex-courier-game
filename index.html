@@ -39,7 +39,7 @@
     .language-art strong { font-size: clamp(44px,8vw,72px); line-height: 1; letter-spacing: -.08em; }
     .language-art span, .rules-art small { font-size: 14px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
     .rules-art strong { font-size: clamp(56px,9vw,92px); line-height: 1; }
-    .rules-copy ul { margin: 14px 0 0; padding-left: 20px; color: #4e5864; font-size: 14px; line-height: 1.55; }
+    .rules-copy ul { margin: 14px 0 0; padding-left: 20px; color: #4e5864; font-size: 14px; line-height: 1.55; } #rulesAuthor { margin: 18px 0 0; padding-top: 12px; border-top: 1px solid #e8ebee; color: #707984; font-size: 12px; font-weight: 650; letter-spacing: .02em; }
     .language-actions { display: flex; gap: 10px; margin-top: 22px; }
     .welcome-card { display: grid; grid-template-columns: minmax(220px,.85fr) 1.15fr; width: min(100%,760px); max-height: min(620px,calc(100vh - 40px)); overflow: hidden; border: 1px solid #e8ebee; border-radius: 24px; background: linear-gradient(135deg,#fff 55%,#fff8ef); box-shadow: 0 28px 90px #08111b55; }
     .welcome-art { min-height: 370px; display: flex; align-items: end; justify-content: center; overflow: hidden; background: radial-gradient(ellipse at 50% 28%,#fff 0,#f4f6f7 66%,#e9edf0 100%); }
@@ -174,6 +174,7 @@
         <h2 id="rulesTitle">Das Ziel</h2>
         <p id="rulesIntro"></p>
         <ul id="rulesList"></ul>
+        <p class="rules-author" id="rulesAuthor"></p>
         <button id="rulesOk" type="button"></button>
       </div>
     </section>
@@ -282,7 +283,7 @@
     const rulesArtCaption = document.querySelector('#rulesArtCaption');
     const rulesTitle = document.querySelector('#rulesTitle');
     const rulesIntro = document.querySelector('#rulesIntro');
-    const rulesList = document.querySelector('#rulesList');
+    const rulesList = document.querySelector('#rulesList'); const rulesAuthor = document.querySelector('#rulesAuthor');
     const rulesOk = document.querySelector('#rulesOk');
     const gameTitle = document.querySelector('#gameTitle');
     const routeSub = document.querySelector('#routeSub');
@@ -359,7 +360,7 @@
         leaderboardTitle:'Bestenliste', leaderboardEyebrow:'COURIER CHALLENGE', leaderboardButton:'🏆 Rangliste ansehen', leaderboardLoading:'Bestenliste wird geladen…', leaderboardEmpty:'Noch keine Ergebnisse. Spiele eine Runde, um den ersten Eintrag zu erstellen.', leaderboardError:'Die Bestenliste ist gerade nicht erreichbar. Bitte später erneut versuchen.', leaderboardClose:'Schließen', leaderboardPoints:'Punkte', leaderboardDetails:'{delivered}/8 zugestellt · {returns} Retouren · {time} übrig',
         secondsDelta:'{sign}{seconds} Sekunden', startPrompt:'Wähle deinen Kurier und starte die Tour.', startAction:'Tour starten',
         directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Willkommen in unserem Team!', directorMessage:'Guten Tag, ich heiße Andrej Koch. Ich bin Geschäftsführer der TKA GmbH. Willkommen in unserem Team! Arbeite verantwortungsbewusst, achte auf die Pakete und gute Fahrt!', okContinue:'OK, weiter', stampMessage:'Bitte kurz die Arbeitszeit stempeln — dann geht die Tour weiter.',
-        languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Kurz erklärt', rulesTitle:'Das Ziel', rulesIntro:'Bring möglichst viele Pakete ans Ziel und sammle Punkte.',
+        languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Kurz erklärt', rulesTitle:'Das Ziel', rulesIntro:'Bring möglichst viele Pakete ans Ziel und sammle Punkte.', rulesAuthor:'Ein Spiel von Veaceslav Suharev',
         rules:['Du hast 2:30 Minuten für 8 Stopps.','Ist niemand zu Hause? Wähle Haustür, Nachbar oder Rückgabe. Jede Retoure kostet 10 Punkte.','Bei Stau: richtige Route +10 Sekunden, falsche Route −10 Sekunden.','Die Baxter-Palette bringt +20 Punkte, kostet aber 15 Sekunden.'], rulesButton:'OK, verstanden',
         courierTitle:'Kurier auswählen', courierHint:'Wähle deinen Namen aus der Liste oder einen neuen Kurier.', profileEyebrow:'Kurier bei Trans-o-Flex', profileLabel:'Gib deinen Namen oder Nachnamen ein', namePlaceholder:'Zum Beispiel: Max Mustermann', yourName:'dein Name', newCourier:'Neuer Kurier', rulesArtCaption:'Stopps · 2:30',
         courierGreeting:'Ich heiße {name}. Heute bringe ich die Pakete sicher ans Ziel und sammle so viele Punkte wie möglich. Gute Fahrt!', cancel:'Abbrechen', backToList:'Zur Liste', continue:'Weiter', nameRequired:'Gib deinen Namen oder Nachnamen ein.', courierIdentity:'Kurier: {name}',
@@ -381,7 +382,7 @@
         leaderboardTitle:'Clasament', leaderboardEyebrow:'PROVOCAREA CURIERILOR', leaderboardButton:'🏆 Vezi clasamentul', leaderboardLoading:'Se încarcă clasamentul…', leaderboardEmpty:'Nu există încă rezultate. Joacă o rundă pentru primul rezultat.', leaderboardError:'Clasamentul nu este disponibil acum. Încearcă din nou mai târziu.', leaderboardClose:'Închide', leaderboardPoints:'puncte', leaderboardDetails:'{delivered}/8 livrate · {returns} retururi · {time} rămase',
         secondsDelta:'{sign}{seconds} secunde', startPrompt:'Alege curierul și pornește pe traseu.', startAction:'Începe traseul',
         directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Bine ai venit în echipa noastră!', directorMessage:'Bună ziua, mă numesc Andrej Koch. Sunt directorul companiei TKA GmbH. Bine ai venit în echipa noastră! Lucrează responsabil, ai grijă de colete și drum bun!', okContinue:'OK, continuă', stampMessage:'Înregistrează timpul de lucru, apoi continuă traseul.',
-        languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Pe scurt', rulesTitle:'Scopul jocului', rulesIntro:'Livrează cât mai multe colete și adună puncte.',
+        languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Pe scurt', rulesTitle:'Scopul jocului', rulesIntro:'Livrează cât mai multe colete și adună puncte.', rulesAuthor:'Un joc creat de Veaceslav Suharev',
         rules:['Ai 2:30 minute pentru 8 opriri.','Dacă nu e nimeni acasă, alege ușa, vecinul sau returul. Fiecare retur scade 10 puncte.','La ambuteiaj: ruta corectă adaugă 10 secunde, cea greșită scade 10 secunde.','Paletul Baxter aduce +20 puncte, dar costă 15 secunde.'], rulesButton:'OK, am înțeles',
         courierTitle:'Alege curierul', courierHint:'Alege-ți numele din listă sau un curier nou.', profileEyebrow:'Curier Trans-o-Flex', profileLabel:'Scrie-ți numele sau prenumele', namePlaceholder:'De exemplu: Ion Popescu', yourName:'numele tău', newCourier:'Curier nou', rulesArtCaption:'Opriri · 2:30',
         courierGreeting:'Mă numesc {name}. Astăzi voi livra coletele cu grijă și voi încerca să adun cât mai multe puncte. Drum bun!', cancel:'Anulează', backToList:'Înapoi la listă', continue:'Continuă', nameRequired:'Scrie-ți numele sau prenumele.', courierIdentity:'Curier: {name}',
@@ -411,7 +412,7 @@
       scoreLabel.textContent=tr('scoreLabel',{score:game.score});complaintsLabel.textContent=tr('complaintsLabel',{count:game.complaints});routeTimeLabel.textContent=tr('routeTimeLabel',{time:formatRouteTime(game.timeLeft)});returnsLabel.textContent=tr('returnsLabel',{count:game.returns});refreshRouteProgress();
       message.textContent=tr('startPrompt');action.textContent=tr('startAction');canvas.setAttribute('aria-label',tr('gameTitle'));
       languageTitle.textContent=lang.languageTitle;languageHint.textContent=lang.languageHint;
-      rulesEyebrow.textContent=lang.rulesEyebrow;rulesTitle.textContent=lang.rulesTitle;rulesArtCaption.textContent=lang.rulesArtCaption;rulesIntro.textContent=lang.rulesIntro;rulesList.replaceChildren(...lang.rules.map(text=>{const item=document.createElement('li');item.textContent=text;return item;}));rulesOk.textContent=lang.rulesButton;
+      rulesEyebrow.textContent=lang.rulesEyebrow;rulesTitle.textContent=lang.rulesTitle;rulesArtCaption.textContent=lang.rulesArtCaption;rulesIntro.textContent=lang.rulesIntro;rulesAuthor.textContent=lang.rulesAuthor;rulesList.replaceChildren(...lang.rules.map(text=>{const item=document.createElement('li');item.textContent=text;return item;}));rulesOk.textContent=lang.rulesButton;
       document.querySelector('#directorEyebrow').textContent=lang.directorEyebrow;welcomeTitle.textContent=lang.directorTitle;welcomeMessage.textContent=lang.directorMessage;directorOk.textContent=lang.okContinue;
       stampMessage.textContent=lang.stampMessage;stampOk.textContent='OK';
       leaderboardTitle.textContent=lang.leaderboardTitle;leaderboardEyebrow.textContent=lang.leaderboardEyebrow;leaderboardOpenButton.textContent=lang.leaderboardButton;leaderboardCloseButton.textContent=lang.leaderboardClose;leaderboardCloseX.setAttribute('aria-label',lang.leaderboardClose);
