@@ -408,7 +408,7 @@
     function applyLanguage(){
       const lang=translations[currentLanguage];
       document.documentElement.lang=currentLanguage;document.title=tr('pageTitle');
-      gameTitle.textContent=tr('gameTitle');logGameActivity('courier_selected',{playerName:activeCourierName}); courierIdentity.textContent=tr('chooseCourier');routeSub.textContent=` · ${tr('packageCount')} · ${tr('routeDuration')}`;
+      gameTitle.textContent=tr('gameTitle'); courierIdentity.textContent=tr('chooseCourier');routeSub.textContent=` · ${tr('packageCount')} · ${tr('routeDuration')}`;
       scoreLabel.textContent=tr('scoreLabel',{score:game.score});complaintsLabel.textContent=tr('complaintsLabel',{count:game.complaints});routeTimeLabel.textContent=tr('routeTimeLabel',{time:formatRouteTime(game.timeLeft)});returnsLabel.textContent=tr('returnsLabel',{count:game.returns});refreshRouteProgress();
       message.textContent=tr('startPrompt');action.textContent=tr('startAction');canvas.setAttribute('aria-label',tr('gameTitle'));
       languageTitle.textContent=lang.languageTitle;languageHint.textContent=lang.languageHint;
@@ -714,7 +714,7 @@
       activeCourierName=courier.custom?profileNameInput.value.trim():courier.name;
       if(!activeCourierName){profileNameInput.focus();profileNameInput.setCustomValidity(tr('nameRequired'));profileNameInput.reportValidity();return;}
       profileNameInput.setCustomValidity('');
-      logGameActivity('courier_selected',{playerName:activeCourierName}); logGameActivity('courier_selected',{playerName:activeCourierName}); courierIdentity.textContent=tr('courierIdentity',{name:activeCourierName});
+      logGameActivity('courier_selected',{playerName:activeCourierName}); courierIdentity.textContent=tr('courierIdentity',{name:activeCourierName});
       closeCourierDialog();palletDialog.hidden=false;takePalletButton.focus();
     });
     takePalletButton.addEventListener('click',()=>{palletDialog.hidden=true;begin(true);});
