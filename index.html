@@ -649,10 +649,10 @@
             return_count:Math.max(0,Math.min(STOP_COUNT,Math.trunc(game.returns))),
             remaining_seconds:Math.max(0,Math.min(ROUTE_TIME_LIMIT,Math.floor(game.timeLeft)))
           };
-          const save=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`,{
+          const save=await fetch(`${SUPABASE_URL}/rest/v1/rpc/submit_best_score`,{
             method:'POST',
             headers:leaderboardHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),
-            body:JSON.stringify(result)
+            body:JSON.stringify({p_player_name:result.player_name,p_courier_name:result.courier_name,p_score:result.score,p_delivered_count:result.delivered_count,p_return_count:result.return_count,p_remaining_seconds:result.remaining_seconds})
           });
           if(!save.ok)throw new Error(`save ${save.status}`);
         }
@@ -661,7 +661,7 @@
           order:'score.desc,delivered_count.desc,return_count.asc,remaining_seconds.desc,created_at.asc',
           limit:'10'
         });
-        const response=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?${params}`,{headers:leaderboardHeaders()});
+        const response=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard_best?${params}`,{headers:leaderboardHeaders()});
         if(!response.ok)throw new Error(`read ${response.status}`);
         const rows=await response.json();
         leaderboardEntries.replaceChildren();
