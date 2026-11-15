@@ -351,7 +351,7 @@
     let selectedCourier = 0;
     let activeCourierName = couriers[selectedCourier].name;
     const SUPABASE_URL = 'https://sjtgbqhirztfvnwairrx.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_T4J_phWQ1pgQCs8JSVBvjw_0BaaZR8E'; const activitySessionId=crypto.randomUUID(); function logGameActivity(eventType,details={}){const courier=couriers[selectedCourier];const event={p_session_id:activitySessionId,p_event_type:eventType,p_player_name:details.playerName||null,p_courier_name:details.courierName||(courier.custom?tr('newCourier'):courier.name),p_language:eventType==='visit'?null:(details.language??currentLanguage),p_baxter_taken:details.baxterTaken??null,p_score:details.score??null,p_delivered_count:details.delivered??null,p_return_count:details.returns??null,p_remaining_seconds:details.remainingSeconds??null,p_finish_reason:details.finishReason??null};fetch(`${SUPABASE_URL}/rest/v1/rpc/log_game_activity`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(event),keepalive:true}).catch(error=>console.warn('Activity log request failed',error));}
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_T4J_phWQ1pgQCs8JSVBvjw_0BaaZR8E'; const activitySessionId=crypto.randomUUID(); function logGameActivity(eventType,details={}){const courier=couriers[selectedCourier];const event={p_session_id:activitySessionId,p_event_type:eventType,p_player_name:details.playerName||null,p_courier_name:(eventType==='visit'||eventType==='language_selected')?null:(details.courierName||(courier.custom?tr('newCourier'):courier.name)),p_language:eventType==='visit'?null:(details.language??currentLanguage),p_baxter_taken:details.baxterTaken??null,p_score:details.score??null,p_delivered_count:details.delivered??null,p_return_count:details.returns??null,p_remaining_seconds:details.remainingSeconds??null,p_finish_reason:details.finishReason??null};fetch(`${SUPABASE_URL}/rest/v1/rpc/log_game_activity`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(event),keepalive:true}).catch(error=>console.warn('Activity log request failed',error));}
     let leaderboardReturnTarget = 'courier';
     const translations = {
       de: {
@@ -652,7 +652,7 @@
           const save=await fetch(`${SUPABASE_URL}/rest/v1/rpc/submit_best_score`,{
             method:'POST',
             headers:leaderboardHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),
-            body:JSON.stringify({p_player_name:result.player_name,p_courier_name:result.courier_name,p_score:result.score,p_delivered_count:result.delivered_count,p_return_count:result.return_count,p_remaining_seconds:result.remaining_seconds})
+            body:JSON.stringify({p_player_name:result.player_name,p_courier_name:(eventType==='visit'||eventType==='language_selected')?null:result.courier_name,p_score:result.score,p_delivered_count:result.delivered_count,p_return_count:result.return_count,p_remaining_seconds:result.remaining_seconds})
           });
           if(!save.ok)throw new Error(`save ${save.status}`);
         }
