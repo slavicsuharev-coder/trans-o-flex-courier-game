@@ -49,6 +49,14 @@
     .welcome-copy h2 { margin: 0 0 16px; color: #222a31; font-size: clamp(24px,4vw,34px); line-height: 1.08; letter-spacing: -.04em; }
     .welcome-copy p:not(.welcome-eyebrow) { margin: 0; color: #4e5864; font-size: 16px; line-height: 1.65; }
     .welcome-copy button { margin-top: 26px; min-width: 145px; }
+    .stamp-dialog { z-index: 32; }
+    .stamp-card { width: min(100%,820px); }
+    .stamp-art { position: relative; min-height: 370px; display: flex; align-items: end; justify-content: center; overflow: hidden; padding: 12px 4px 34px; background: radial-gradient(ellipse at 50% 28%,#fff 0,#f4f6f7 66%,#e9edf0 100%); }
+    .stamp-person { position: relative; width: 50%; height: 100%; min-width: 0; margin: 0; display: flex; align-items: end; justify-content: center; }
+    .stamp-person img { display: block; width: 100%; height: 100%; max-height: 340px; object-fit: contain; object-position: center bottom; }
+    .stamp-person figcaption { position: absolute; bottom: -27px; left: 50%; transform: translateX(-50%); padding: 4px 7px; border-radius: 7px; background: #ffffffd9; color: #45505b; font-size: 11px; font-weight: 750; white-space: nowrap; }
+    .stamp-clock { position: absolute; z-index: 2; top: 18px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; display: grid; place-items: center; border: 3px solid #fff; border-radius: 50%; background: #f28c00; color: #fff; box-shadow: 0 5px 18px #29394835; }
+    .stamp-clock svg { width: 31px; height: 31px; }
     .courier-dialog { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 18px; background: rgba(22,29,36,.56); backdrop-filter: blur(4px); }
     .courier-dialog[hidden] { display: none; }
     .pallet-dialog { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 18px; background: rgba(19,27,34,.72); backdrop-filter: blur(7px); }
@@ -102,6 +110,7 @@
     .choices .choice-yes:hover { background: #cc7200; }
     button:focus-visible { outline: 3px solid #252a30; outline-offset: 3px; }
     @media (max-width: 760px) { .courier-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .stamp-art { min-height: 210px; padding-top: 8px; } .stamp-person img { max-height: 190px; } .stamp-clock { top: 9px; width: 42px; height: 42px; } .stamp-clock svg { width: 25px; height: 25px; } .stamp-person figcaption { font-size: 10px; bottom: -26px; } }
     @media (max-width: 560px) { body { padding: 12px; } header, .controls { padding-left: 16px; padding-right: 16px; } header { align-items: flex-start; flex-direction: column; } .stats { justify-content: flex-start; } .controls { align-items: stretch; flex-direction: column; } .actions, .choices { width: 100%; } .actions button, .choices button { flex: 1; } .dialog-card { padding: 14px; } .courier-list { grid-template-columns: 1fr 1fr; gap: 7px; } .courier-option { padding: 8px; gap: 7px; } .courier-mini { flex-basis: 30px; width: 30px; height: 30px; } .courier-name { font-size: 13px; } .courier-profile { grid-template-columns: 1fr; gap: 14px; } .profile-art { height: clamp(155px,27vh,220px); } .profile-copy h3 { font-size: 22px; } .dialog-actions { flex-direction: column-reverse; } .dialog-actions button { width: 100%; } .welcome-dialog { padding: 12px; } .welcome-card { grid-template-columns: 1fr; width: min(100%,430px); max-height: calc(100vh - 24px); overflow-y: auto; } .welcome-art { min-height: 0; height: clamp(190px,32vh,250px); } .language-art, .rules-art { min-height: 125px; } .welcome-art img { max-height: 100%; } .welcome-copy { padding: 22px; } .welcome-copy h2 { margin-bottom: 10px; font-size: 26px; } .welcome-copy p:not(.welcome-eyebrow) { font-size: 15px; line-height: 1.5; } .rules-copy ul { font-size: 13px; } .welcome-copy button { width: 100%; margin-top: 18px; } .language-actions { width: 100%; } .language-actions button { flex: 1; } .pallet-dialog { padding: 12px; } .pallet-card { max-height: calc(100vh - 24px); } .pallet-images { height: clamp(170px,30vh,230px); } .pallet-copy { padding: 16px; } .pallet-copy p:not(.welcome-eyebrow) { font-size: 14px; } .pallet-actions { flex-direction: column; } .pallet-actions button { width: 100%; } }
   </style>
 </head>
@@ -157,6 +166,21 @@
         <h2 id="welcomeTitle"></h2>
         <p id="welcomeMessage"></p>
         <button id="directorOk" type="button"></button>
+      </div>
+    </section>
+  </div>
+  <div class="welcome-dialog stamp-dialog" id="stampDialog" hidden>
+    <section class="welcome-card stamp-card" role="dialog" aria-modal="true" aria-labelledby="stampTitle" aria-describedby="stampMessage">
+      <div class="stamp-art" aria-label="Andrej Geier und Niko erinnern ans Stempeln">
+        <span class="stamp-clock" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="17" r="11" stroke="currentColor" stroke-width="2.5"/><path d="M16 10v7l5 3M12 3h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+        <figure class="stamp-person"><img src="assets/andrej-geier-stamp.png" alt="Andrej Geier erinnert ans Stempeln"><figcaption>Andrej Geier</figcaption></figure>
+        <figure class="stamp-person"><img src="assets/niko-stamp.png" alt="Niko erinnert ans Stempeln"><figcaption>Niko</figcaption></figure>
+      </div>
+      <div class="welcome-copy stamp-copy">
+        <p class="welcome-eyebrow">Andrej Geier · Niko</p>
+        <h2 id="stampTitle">Stempeln bitte!</h2>
+        <p id="stampMessage">Bitte kurz die Arbeitszeit stempeln — dann geht die Tour weiter.</p>
+        <button id="stampOk" type="button">OK</button>
       </div>
     </section>
   </div>
@@ -241,6 +265,9 @@
     const palletDescription = document.querySelector('#palletDescription');
     const palletBenefit = document.querySelector('#palletBenefit');
     const directorDialog = document.querySelector('#directorDialog');
+    const stampDialog = document.querySelector('#stampDialog');
+    const stampMessage = document.querySelector('#stampMessage');
+    const stampOk = document.querySelector('#stampOk');
     const courierDialog = document.querySelector('#courierDialog');
     const palletDialog = document.querySelector('#palletDialog');
     const takePalletButton = document.querySelector('#takePallet');
@@ -286,7 +313,7 @@
         pageTitle:'Kurierroute — Spiel', gameTitle:'Kurier auf Tour', chooseCourier:'Kurier auswählen', packageCount:'8 Pakete', routeDuration:'2:30 für die ganze Tour',
         scoreLabel:'Punkte: {score}', complaintsLabel:'Beschwerden: {count}', routeTimeLabel:'Übrig: {time}', returnsLabel:'Retouren: {count}', progressLabel:'Stopps: {done}/{total} · übrig {remaining}',
         secondsDelta:'{sign}{seconds} Sekunden', startPrompt:'Wähle deinen Kurier und starte die Tour.', startAction:'Tour starten',
-        directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Willkommen in unserem Team!', directorMessage:'Guten Tag, ich heiße Andrej Koch. Ich bin Geschäftsführer der TKA GmbH. Willkommen in unserem Team! Arbeite verantwortungsbewusst, achte auf die Pakete und gute Fahrt!', okContinue:'OK, weiter',
+        directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Willkommen in unserem Team!', directorMessage:'Guten Tag, ich heiße Andrej Koch. Ich bin Geschäftsführer der TKA GmbH. Willkommen in unserem Team! Arbeite verantwortungsbewusst, achte auf die Pakete und gute Fahrt!', okContinue:'OK, weiter', stampMessage:'Bitte kurz die Arbeitszeit stempeln — dann geht die Tour weiter.',
         languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Kurz erklärt', rulesTitle:'Das Ziel', rulesIntro:'Bring möglichst viele Pakete ans Ziel und sammle Punkte.',
         rules:['Du hast 2:30 Minuten für 8 Stopps.','Ist niemand zu Hause? Wähle Haustür, Nachbar oder Rückgabe. Jede Retoure kostet 10 Punkte.','Bei Stau: richtige Route +10 Sekunden, falsche Route −10 Sekunden.','Die Baxter-Palette bringt +20 Punkte, kostet aber 15 Sekunden.'], rulesButton:'OK, verstanden',
         courierTitle:'Kurier auswählen', courierHint:'Wähle deinen Namen aus der Liste oder einen neuen Kurier.', profileEyebrow:'Kurier bei Trans-o-Flex', profileLabel:'Gib deinen Namen oder Nachnamen ein', namePlaceholder:'Zum Beispiel: Max Mustermann', yourName:'dein Name', newCourier:'Neuer Kurier', rulesArtCaption:'Stopps · 2:30',
@@ -307,7 +334,7 @@
         pageTitle:'Ruta curierului — joc', gameTitle:'Curierul pe traseu', chooseCourier:'Alege curierul', packageCount:'8 colete', routeDuration:'2:30 pentru tot traseul',
         scoreLabel:'Puncte: {score}', complaintsLabel:'Reclamații: {count}', routeTimeLabel:'Timp rămas: {time}', returnsLabel:'Retururi: {count}', progressLabel:'Opriri: {done}/{total} · rămase {remaining}',
         secondsDelta:'{sign}{seconds} secunde', startPrompt:'Alege curierul și pornește pe traseu.', startAction:'Începe traseul',
-        directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Bine ai venit în echipa noastră!', directorMessage:'Bună ziua, mă numesc Andrej Koch. Sunt directorul companiei TKA GmbH. Bine ai venit în echipa noastră! Lucrează responsabil, ai grijă de colete și drum bun!', okContinue:'OK, continuă',
+        directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Bine ai venit în echipa noastră!', directorMessage:'Bună ziua, mă numesc Andrej Koch. Sunt directorul companiei TKA GmbH. Bine ai venit în echipa noastră! Lucrează responsabil, ai grijă de colete și drum bun!', okContinue:'OK, continuă', stampMessage:'Înregistrează timpul de lucru, apoi continuă traseul.',
         languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Pe scurt', rulesTitle:'Scopul jocului', rulesIntro:'Livrează cât mai multe colete și adună puncte.',
         rules:['Ai 2:30 minute pentru 8 opriri.','Dacă nu e nimeni acasă, alege ușa, vecinul sau returul. Fiecare retur scade 10 puncte.','La ambuteiaj: ruta corectă adaugă 10 secunde, cea greșită scade 10 secunde.','Paletul Baxter aduce +20 puncte, dar costă 15 secunde.'], rulesButton:'OK, am înțeles',
         courierTitle:'Alege curierul', courierHint:'Alege-ți numele din listă sau un curier nou.', profileEyebrow:'Curier Trans-o-Flex', profileLabel:'Scrie-ți numele sau prenumele', namePlaceholder:'De exemplu: Ion Popescu', yourName:'numele tău', newCourier:'Curier nou', rulesArtCaption:'Opriri · 2:30',
@@ -340,6 +367,7 @@
       languageTitle.textContent=lang.languageTitle;languageHint.textContent=lang.languageHint;
       rulesEyebrow.textContent=lang.rulesEyebrow;rulesTitle.textContent=lang.rulesTitle;rulesArtCaption.textContent=lang.rulesArtCaption;rulesIntro.textContent=lang.rulesIntro;rulesList.replaceChildren(...lang.rules.map(text=>{const item=document.createElement('li');item.textContent=text;return item;}));rulesOk.textContent=lang.rulesButton;
       document.querySelector('#directorEyebrow').textContent=lang.directorEyebrow;welcomeTitle.textContent=lang.directorTitle;welcomeMessage.textContent=lang.directorMessage;directorOk.textContent=lang.okContinue;
+      stampMessage.textContent=lang.stampMessage;stampOk.textContent='OK';
       courierDialogTitle.textContent=lang.courierTitle;courierDialogHint.textContent=lang.courierHint;customCourierOptionLabel.textContent=lang.newCourier;profileEyebrow.textContent=lang.profileEyebrow;profileNameLabel.textContent=lang.profileLabel;profileNamePlaceholder.placeholder=lang.namePlaceholder;
       cancelCourier.textContent=lang.cancel;confirmCourier.textContent=lang.continue;
       palletTitle.textContent=lang.palletTitle;palletDescription.textContent=lang.palletDescription;palletBenefit.textContent=lang.palletBenefit;document.querySelector('.pallet-copy .welcome-eyebrow').textContent=lang.palletEyebrow;takePalletButton.textContent=lang.takePallet;skipPalletButton.textContent=lang.skipPallet;
@@ -355,7 +383,7 @@
     const ROUTE_TIME_LIMIT = 150;
     const ROUTE_MOTION_SECONDS = 105;
     const ROUTE_START_PAN = 100;
-    const game = { state: 'ready', x: 20, travel: 0, cityOffset: 0, travelStartPan: 0, travelTargetPan: 0, travelTotal: 0, travelDuration: 0, legElapsed: 0, score: 0, delivered: 0, returns: 0, complaints: 0, scenarios: [], person: 0, parcel: 0, stop: 0, last: 0, routeTime: 0, timeLeft: ROUTE_TIME_LIMIT, clockLast: 0, roadEventStops: new Set(), roadCorrectChoice: '' };
+    const game = { state: 'ready', x: 20, travel: 0, cityOffset: 0, travelStartPan: 0, travelTargetPan: 0, travelTotal: 0, travelDuration: 0, legElapsed: 0, score: 0, delivered: 0, returns: 0, complaints: 0, scenarios: [], person: 0, parcel: 0, stop: 0, last: 0, routeTime: 0, timeLeft: ROUTE_TIME_LIMIT, clockLast: 0, roadEventStops: new Set(), roadCorrectChoice: '', stampReminderShown: false };
     let clientReactionTimer=0;
     let timeDeltaTimer=0;
     function refreshRouteProgress(){routeProgressLabel.textContent=tr('progressLabel',{done:Math.min(game.stop,STOP_COUNT),total:STOP_COUNT,remaining:Math.max(0,STOP_COUNT-game.stop)});}
@@ -638,7 +666,7 @@
     function begin(takesBaxter=false) {
       const baxterPoints=takesBaxter?20:0;
       const baxterTimePenalty=takesBaxter?15:0;
-      game.score=baxterPoints;game.delivered=0;game.returns=0;game.complaints=0;game.scoreDelta=baxterPoints;game.stop=0;game.x=20;game.travel=0;game.cityOffset=ROUTE_START_PAN;game.travelTotal=0;game.legElapsed=0;game.packageAtDoor=false;game.routeTime=baxterTimePenalty;game.timeLeft=ROUTE_TIME_LIMIT-baxterTimePenalty;game.clockLast=performance.now();
+      game.score=baxterPoints;game.delivered=0;game.returns=0;game.complaints=0;game.scoreDelta=baxterPoints;game.stop=0;game.stampReminderShown=false;game.x=20;game.travel=0;game.cityOffset=ROUTE_START_PAN;game.travelTotal=0;game.legElapsed=0;game.packageAtDoor=false;game.routeTime=baxterTimePenalty;game.timeLeft=ROUTE_TIME_LIMIT-baxterTimePenalty;game.clockLast=performance.now();
       clearTimeout(timeDeltaTimer);timeDeltaLabel.hidden=true;refreshRouteProgress();
       if(takesBaxter){game.scorePop=tr('initialBaxterScore');game.popUntil=performance.now()+1600;}else{game.popUntil=0;}
       const trafficCandidates=[1,2,3,4,5,6];
@@ -742,6 +770,13 @@
       function walk(now){if(game.state==='done')return;const t=Math.min((now-start)/duration,1);game.person=from+(to-from)*t;game.parcel=game.carryBack?1:0;if(t<1)requestAnimationFrame(walk);else{game.parcel=0;game.carryBack=false;advanceRoute();}}
       requestAnimationFrame(walk);
     }
+    function continueAfterStampReminder(){
+      stampDialog.hidden=true;
+      if(game.timeLeft<=0){finishRoute(true);return;}
+      game.clockLast=performance.now();
+      if(game.roadEventStops.has(game.stop))showRoadChoice();else startDriveToStop();
+    }
+    stampOk.addEventListener('click',continueAfterStampReminder);
     function advanceRoute(){
       game.stop++;
       refreshRouteProgress();
@@ -749,11 +784,14 @@
         finishRoute(false);
       }else{
         game.packageAtDoor=false;
-        if(game.roadEventStops.has(game.stop))showRoadChoice();else startDriveToStop();
+        if(game.stop===4&&!game.stampReminderShown){
+          game.stampReminderShown=true;game.state='stamp-reminder';stampMessage.textContent=tr('stampMessage');stampDialog.hidden=false;stampOk.focus();
+        }else if(game.roadEventStops.has(game.stop))showRoadChoice();else startDriveToStop();
       }
     }
     function finishRoute(timeExpired) {
       if(game.state==='done')return;
+      stampDialog.hidden=true;
       if(timeExpired){
         const unfinished=Math.max(0,STOP_COUNT-game.delivered-game.returns);
         game.returns+=unfinished;game.score-=unfinished*RETURN_PENALTY;
@@ -773,6 +811,7 @@
       if(!languageDialog.hidden)return;
       if(!rulesDialog.hidden){if(e.key==='Enter'){e.preventDefault();rulesOk.click();}return;}
       if(!palletDialog.hidden)return;
+      if(!stampDialog.hidden){if(e.key==='Enter'){e.preventDefault();stampOk.click();}return;}
       if(!courierDialog.hidden){
         if(e.key==='Escape'){if(!courierProfile.hidden)cancelCourier.click();else closeCourierDialog();}
         else if(e.key==='Enter'&&!courierProfile.hidden){e.preventDefault();confirmCourier.click();}
