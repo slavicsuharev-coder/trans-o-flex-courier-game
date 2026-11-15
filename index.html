@@ -72,6 +72,11 @@
       { house: '38', points: 10, result: 'Посылка вручена у дома 38.' },
       { house: '51', points: 20, result: 'Бонус за последнюю доставку у дома 51!' }
     ];
+    const streetCars = [
+      { phase: 0.12, speed: 46, width: 112, height: 38, y: 338, color: '#526c76', light: '#e6f1f2' },
+      { phase: 0.55, speed: 63, width: 94, height: 33, y: 357, color: '#a44e38', light: '#ffe5b4' },
+      { phase: 0.83, speed: 39, width: 126, height: 41, y: 330, color: '#d8d7d0', light: '#f7edcb' }
+    ];
 
     function roundRect(c, x, y, w, h, r, fill, stroke) {
       c.beginPath(); c.roundRect(x, y, w, h, r);
@@ -80,19 +85,56 @@
     }
     function drawVan(x) {
       // Faithful sprite generated from the supplied truck photo.
+      ctx.fillStyle='rgba(18,25,31,.23)';ctx.beginPath();ctx.ellipse(x+191,431,190,10,0,0,Math.PI*2);ctx.fill();
       if(truckSprite.complete&&truckSprite.naturalWidth) ctx.drawImage(truckSprite,x-20,235,420,210);
     }
-    function drawPerson(x, y, carrying) {
+    function drawPerson(x, y, carrying, now=0) {
       if(courierSprite.complete&&courierSprite.naturalWidth){
+        const bob=Math.sin(now/95)*1.8;
         ctx.fillStyle='rgba(24,28,31,.18)';ctx.beginPath();ctx.ellipse(x,y+COURIER_HEIGHT-2,13,2.5,0,0,Math.PI*2);ctx.fill();
-        ctx.drawImage(courierSprite,x-COURIER_WIDTH/2,y,COURIER_WIDTH,COURIER_HEIGHT);
+        ctx.drawImage(courierSprite,x-COURIER_WIDTH/2,y+bob,COURIER_WIDTH,COURIER_HEIGHT);
         if(carrying){
-          roundRect(ctx,x+13,y+25,22,20,2,'#b88654','#765534');
-          ctx.strokeStyle='#e4c89d';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+24,y+26);ctx.lineTo(x+24,y+44);ctx.moveTo(x+14,y+35);ctx.lineTo(x+34,y+35);ctx.stroke();
+          roundRect(ctx,x+13,y+25+bob,22,20,2,'#b88654','#765534');
+          ctx.strokeStyle='#e4c89d';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x+24,y+26+bob);ctx.lineTo(x+24,y+44+bob);ctx.moveTo(x+14,y+35+bob);ctx.lineTo(x+34,y+35+bob);ctx.stroke();
         }
       }
     }
-    function draw() {
+    function drawTraffic(now) {
+      // Small cars move through the far lane at different speeds and depths.
+      for(let i=0;i<streetCars.length;i++){
+        const car=streetCars[i], span=W+car.width+100;
+        const x=((now/1000*car.speed+car.phase*span)%(span))-car.width-50;
+        const perspective=car.height/38;
+        const y=car.y;
+        ctx.save();
+        ctx.globalAlpha=.91;
+        ctx.fillStyle='rgba(15,21,25,.24)';ctx.beginPath();ctx.ellipse(x+car.width/2,y+car.height-1,car.width*.48,4*perspective,0,0,Math.PI*2);ctx.fill();
+        const body=ctx.createLinearGradient(0,y,0,y+car.height);
+        body.addColorStop(0,car.light);body.addColorStop(.2,car.color);body.addColorStop(1,'#303b40');
+        roundRect(ctx,x,y+8*perspective,car.width,car.height-9*perspective,8*perspective,body,'rgba(31,39,43,.6)');
+        ctx.fillStyle='rgba(32,48,55,.92)';ctx.beginPath();
+        ctx.moveTo(x+car.width*.2,y+9*perspective);ctx.lineTo(x+car.width*.31,y+1*perspective);ctx.quadraticCurveTo(x+car.width*.35,y, x+car.width*.45,y);
+        ctx.lineTo(x+car.width*.69,y+1*perspective);ctx.lineTo(x+car.width*.81,y+9*perspective);ctx.closePath();ctx.fill();
+        ctx.strokeStyle='rgba(221,236,237,.42)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x+car.width*.48,y+1);ctx.lineTo(x+car.width*.48,y+10*perspective);ctx.stroke();
+        for(const wx of [x+car.width*.23,x+car.width*.76]){
+          ctx.fillStyle='#20272b';ctx.beginPath();ctx.ellipse(wx,y+car.height-2*perspective,9*perspective,7*perspective,0,0,Math.PI*2);ctx.fill();
+          ctx.fillStyle='#b9c1c0';ctx.beginPath();ctx.ellipse(wx,y+car.height-2*perspective,3.5*perspective,3.5*perspective,0,0,Math.PI*2);ctx.fill();
+        }
+        ctx.fillStyle='#ffe2a4';ctx.beginPath();ctx.ellipse(x+car.width-2,y+car.height*.57,2.4*perspective,2.2*perspective,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#bf4f42';ctx.fillRect(x+1,y+car.height*.55,2.5*perspective,4*perspective);
+        ctx.restore();
+      }
+    }
+    function drawAtmosphere(now) {
+      const glow=ctx.createLinearGradient(0,0,0,H);
+      glow.addColorStop(0,'rgba(255,249,231,.12)');glow.addColorStop(.48,'rgba(255,255,255,0)');glow.addColorStop(1,'rgba(13,25,34,.11)');
+      ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+      const pulse=.025+Math.sin(now/2600)*.008;
+      const sun=ctx.createRadialGradient(110,20,4,110,20,215);
+      sun.addColorStop(0,`rgba(255,239,199,${pulse})`);sun.addColorStop(1,'rgba(255,239,199,0)');
+      ctx.fillStyle=sun;ctx.fillRect(0,0,330,230);
+    }
+    function draw(now) {
       ctx.fillStyle='#b9c5cc';ctx.fillRect(0,0,W,H);
       if(citySprite.complete&&citySprite.naturalWidth){
         const sceneWidth=H*citySprite.naturalWidth/citySprite.naturalHeight;
@@ -101,9 +143,11 @@
         const pan=Math.min(game.cityOffset+travelProgress,maxPan);
         ctx.drawImage(citySprite,-pan,0,sceneWidth,H);
       }
+      drawAtmosphere(now);
+      drawTraffic(now);
       const stop=stops[Math.min(game.stop,stops.length-1)];
       if(game.packageAtDoor){roundRect(ctx,784,294,22,20,3,'#b88654','#765534');ctx.strokeStyle='#e4c89d';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(795,295);ctx.lineTo(795,313);ctx.moveTo(785,304);ctx.lineTo(805,304);ctx.stroke();}
-      if(game.state==='delivery') drawPerson(game.person,game.personY||291,game.parcel>0);
+      if(game.state==='delivery') drawPerson(game.person,game.personY||291,game.parcel>0,now);
       drawVan(game.x);
       if(game.state==='home-choice'||game.state==='door-choice'||game.state==='neighbor-choice'||game.state==='delivery') { roundRect(ctx,740,119,116,29,14,'#fff');ctx.fillStyle='#47515b';ctx.font='700 14px system-ui';ctx.textAlign='center';ctx.fillText('ДОМ '+stop.house,798,139); }
       if(game.popUntil&&performance.now()<game.popUntil){const life=(game.popUntil-performance.now())/1200;ctx.globalAlpha=Math.min(1,life*1.5);ctx.fillStyle=game.scoreDelta<0?'#c62828':game.scoreDelta===0?'#53616b':'#168449';ctx.font='800 25px system-ui';ctx.textAlign='center';ctx.fillText(game.scorePop||'+10 очков',800,213-(1-life)*24);ctx.globalAlpha=1;}
@@ -238,7 +282,7 @@
     }
     action.addEventListener('click',deliver);
     window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!action.hidden&&!action.disabled){e.preventDefault();deliver();}});
-    draw();
+    draw(performance.now());
   </script>
 </body>
 </html>
