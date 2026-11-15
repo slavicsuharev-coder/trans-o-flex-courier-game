@@ -351,7 +351,7 @@
     let selectedCourier = 0;
     let activeCourierName = couriers[selectedCourier].name;
     const SUPABASE_URL = 'https://sjtgbqhirztfvnwairrx.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_T4J_phWQ1pgQCs8JSVBvjw_0BaaZR8E';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_T4J_phWQ1pgQCs8JSVBvjw_0BaaZR8E'; const activitySessionId=crypto.randomUUID(); function logGameActivity(eventType,details={}){const courier=couriers[selectedCourier];const event={p_session_id:activitySessionId,p_event_type:eventType,p_player_name:details.playerName||null,p_courier_name:details.courierName||(courier.custom?tr('newCourier'):courier.name),p_language:eventType==='visit'?null:(details.language??currentLanguage),p_baxter_taken:details.baxterTaken??null,p_score:details.score??null,p_delivered_count:details.delivered??null,p_return_count:details.returns??null,p_remaining_seconds:details.remainingSeconds??null,p_finish_reason:details.finishReason??null};fetch(`${SUPABASE_URL}/rest/v1/rpc/log_game_activity`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(event),keepalive:true}).catch(error=>console.warn('Activity log request failed',error));}
     let leaderboardReturnTarget = 'courier';
     const translations = {
       de: {
@@ -408,7 +408,7 @@
     function applyLanguage(){
       const lang=translations[currentLanguage];
       document.documentElement.lang=currentLanguage;document.title=tr('pageTitle');
-      gameTitle.textContent=tr('gameTitle');courierIdentity.textContent=tr('chooseCourier');routeSub.textContent=` · ${tr('packageCount')} · ${tr('routeDuration')}`;
+      gameTitle.textContent=tr('gameTitle');logGameActivity('courier_selected',{playerName:activeCourierName}); courierIdentity.textContent=tr('chooseCourier');routeSub.textContent=` · ${tr('packageCount')} · ${tr('routeDuration')}`;
       scoreLabel.textContent=tr('scoreLabel',{score:game.score});complaintsLabel.textContent=tr('complaintsLabel',{count:game.complaints});routeTimeLabel.textContent=tr('routeTimeLabel',{time:formatRouteTime(game.timeLeft)});returnsLabel.textContent=tr('returnsLabel',{count:game.returns});refreshRouteProgress();
       message.textContent=tr('startPrompt');action.textContent=tr('startAction');canvas.setAttribute('aria-label',tr('gameTitle'));
       languageTitle.textContent=lang.languageTitle;languageHint.textContent=lang.languageHint;
@@ -696,7 +696,7 @@
     languageButtons.forEach(button=>button.addEventListener('click',()=>{
       currentLanguage=button.dataset.language;
       applyLanguage();
-      languageDialog.hidden=true;
+      logGameActivity('language_selected',{language:currentLanguage}); languageDialog.hidden=true;
       rulesDialog.hidden=false;
       rulesOk.focus();
     }));
@@ -714,7 +714,7 @@
       activeCourierName=courier.custom?profileNameInput.value.trim():courier.name;
       if(!activeCourierName){profileNameInput.focus();profileNameInput.setCustomValidity(tr('nameRequired'));profileNameInput.reportValidity();return;}
       profileNameInput.setCustomValidity('');
-      courierIdentity.textContent=tr('courierIdentity',{name:activeCourierName});
+      logGameActivity('courier_selected',{playerName:activeCourierName}); logGameActivity('courier_selected',{playerName:activeCourierName}); courierIdentity.textContent=tr('courierIdentity',{name:activeCourierName});
       closeCourierDialog();palletDialog.hidden=false;takePalletButton.focus();
     });
     takePalletButton.addEventListener('click',()=>{palletDialog.hidden=true;begin(true);});
@@ -782,7 +782,7 @@
     }
     function begin(takesBaxter=false) {
       const baxterPoints=takesBaxter?20:0;
-      const baxterTimePenalty=takesBaxter?15:0;
+      const baxterTimePenalty=takesBaxter?15:0; logGameActivity('game_started',{playerName:activeCourierName,baxterTaken:takesBaxter});
       game.score=baxterPoints;game.delivered=0;game.returns=0;game.complaints=0;game.scoreDelta=baxterPoints;game.stop=0;game.stampReminderShown=false;game.leaderboardSubmitAttempted=false;game.x=20;game.travel=0;game.cityOffset=ROUTE_START_PAN;game.travelTotal=0;game.legElapsed=0;game.packageAtDoor=false;game.routeTime=baxterTimePenalty;game.timeLeft=ROUTE_TIME_LIMIT-baxterTimePenalty;game.clockLast=performance.now();
       clearTimeout(timeDeltaTimer);timeDeltaLabel.hidden=true;refreshRouteProgress();
       if(takesBaxter){game.scorePop=tr('initialBaxterScore');game.popUntil=performance.now()+1600;}else{game.popUntil=0;}
@@ -914,7 +914,7 @@
         game.returns+=unfinished;game.score-=unfinished*RETURN_PENALTY;
         returnsLabel.textContent=tr('returnsLabel',{count:game.returns});scoreLabel.textContent=tr('scoreLabel',{score:game.score});
       }
-      game.state='done';game.clockLast=0;
+      game.state='done';game.clockLast=0; logGameActivity('game_finished',{playerName:activeCourierName,score:Math.trunc(game.score),delivered:Math.min(STOP_COUNT,game.delivered),returns:Math.min(STOP_COUNT,game.returns),remainingSeconds:Math.max(0,Math.min(ROUTE_TIME_LIMIT,Math.floor(game.timeLeft))),finishReason:timeExpired?'time_expired':'route_complete'});
       message.textContent=timeExpired
         ? tr('timeOut',{name:activeCourierName,delivered:game.delivered,total:STOP_COUNT,returns:game.returns,score:game.score})
         : tr('routeDone',{name:activeCourierName,delivered:game.delivered,total:STOP_COUNT,returns:game.returns,complaints:game.complaints,score:game.score,time:formatRouteTime(game.routeTime)});
@@ -941,7 +941,7 @@
       if((e.key==='Enter'||e.key===' ')&&!action.hidden&&!action.disabled){e.preventDefault();deliver();}
     });
     applyLanguage();
-    languageButtons[0].focus();
+    logGameActivity('visit',{language:null}); languageButtons[0].focus();
     draw(performance.now());
   </script>
 </body>
