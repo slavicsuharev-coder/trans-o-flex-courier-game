@@ -659,7 +659,7 @@
         const params=new URLSearchParams({
           select:'player_name,courier_name,score,delivered_count,return_count,remaining_seconds,created_at',
           order:'score.desc,delivered_count.desc,return_count.asc,remaining_seconds.desc,created_at.asc',
-          limit:'10'
+          limit:'1000'
         });
         const response=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard_best?${params}`,{headers:leaderboardHeaders()});
         if(!response.ok)throw new Error(`read ${response.status}`);
