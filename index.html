@@ -57,6 +57,23 @@
     .stamp-person figcaption { position: absolute; bottom: -27px; left: 50%; transform: translateX(-50%); padding: 4px 7px; border-radius: 7px; background: #ffffffd9; color: #45505b; font-size: 11px; font-weight: 750; white-space: nowrap; }
     .stamp-clock { position: absolute; z-index: 2; top: 18px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; display: grid; place-items: center; border: 3px solid #fff; border-radius: 50%; background: #f28c00; color: #fff; box-shadow: 0 5px 18px #29394835; }
     .stamp-clock svg { width: 31px; height: 31px; }
+    .leaderboard-open { display: block; width: 100%; margin-top: 14px; background: #f28c00; }
+    .leaderboard-dialog { z-index: 50; }
+    .leaderboard-card { width: min(100%,680px); max-height: min(720px,calc(100vh - 36px)); overflow: hidden; padding: clamp(20px,4vw,34px); border: 1px solid #e8ebee; border-radius: 24px; background: linear-gradient(145deg,#fff 50%,#fff8ec); box-shadow: 0 28px 90px #08111b66; }
+    .leaderboard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .leaderboard-top .welcome-eyebrow { margin-bottom: 6px; }
+    .leaderboard-card h2 { margin: 0; color: #222a31; font-size: clamp(25px,5vw,34px); }
+    .leaderboard-close-x { flex: 0 0 40px; width: 40px; height: 40px; padding: 0; border-radius: 50%; background: #edf1f4; color: #34404b; box-shadow: none; font-size: 24px; line-height: 1; }
+    .leaderboard-status { margin: 12px 0 16px; color: #596471; line-height: 1.5; }
+    .leaderboard-entries { display: grid; gap: 8px; max-height: min(420px,52vh); overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+    .leaderboard-entry { display: grid; grid-template-columns: 42px minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #e4e8eb; border-radius: 14px; background: #fff; }
+    .leaderboard-rank { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff0d8; color: #a85400; font-weight: 850; }
+    .leaderboard-name { min-width: 0; color: #26313a; font-weight: 800; overflow-wrap: anywhere; }
+    .leaderboard-detail { display: block; margin-top: 3px; color: #68717d; font-size: 12px; font-weight: 500; }
+    .leaderboard-points { color: #a85400; font-size: 19px; font-weight: 850; white-space: nowrap; }
+    .leaderboard-points small { font-size: 11px; font-weight: 700; }
+    .leaderboard-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .leaderboard-footer button { min-width: 130px; }
     .courier-dialog { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 18px; background: rgba(22,29,36,.56); backdrop-filter: blur(4px); }
     .courier-dialog[hidden] { display: none; }
     .pallet-dialog { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 18px; background: rgba(19,27,34,.72); backdrop-filter: blur(7px); }
@@ -101,6 +118,7 @@
     .controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 24px 22px; }
     #message { color: #4e5864; line-height: 1.4; }
     .actions { display: flex; align-items: center; justify-content: flex-end; gap: 9px; flex-wrap: wrap; }
+    .actions .secondary { background: #edf1f4; color: #34404b; box-shadow: none; }
     .choices { display: flex; align-items: center; justify-content: flex-end; gap: 9px; flex-wrap: wrap; }
     button { border: 0; border-radius: 12px; padding: 12px 19px; background: #f28c00; color: white; font: inherit; font-weight: 750; cursor: pointer; box-shadow: 0 4px 10px #f28c0030; }
     button:hover { background: #dc7e00; }
@@ -111,6 +129,7 @@
     button:focus-visible { outline: 3px solid #252a30; outline-offset: 3px; }
     @media (max-width: 760px) { .courier-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 560px) { .stamp-art { min-height: 210px; padding-top: 8px; } .stamp-person img { max-height: 190px; } .stamp-clock { top: 9px; width: 42px; height: 42px; } .stamp-clock svg { width: 25px; height: 25px; } .stamp-person figcaption { font-size: 10px; bottom: -26px; } }
+    @media (max-width: 560px) { .leaderboard-entry { grid-template-columns: 36px minmax(0,1fr) auto; gap: 8px; padding: 10px; } .leaderboard-rank { width: 30px; height: 30px; } .leaderboard-points { font-size: 16px; } .leaderboard-card { padding: 20px 16px; } }
     @media (max-width: 560px) { body { padding: 12px; } header, .controls { padding-left: 16px; padding-right: 16px; } header { align-items: flex-start; flex-direction: column; } .stats { justify-content: flex-start; } .controls { align-items: stretch; flex-direction: column; } .actions, .choices { width: 100%; } .actions button, .choices button { flex: 1; } .dialog-card { padding: 14px; } .courier-list { grid-template-columns: 1fr 1fr; gap: 7px; } .courier-option { padding: 8px; gap: 7px; } .courier-mini { flex-basis: 30px; width: 30px; height: 30px; } .courier-name { font-size: 13px; } .courier-profile { grid-template-columns: 1fr; gap: 14px; } .profile-art { height: clamp(155px,27vh,220px); } .profile-copy h3 { font-size: 22px; } .dialog-actions { flex-direction: column-reverse; } .dialog-actions button { width: 100%; } .welcome-dialog { padding: 12px; } .welcome-card { grid-template-columns: 1fr; width: min(100%,430px); max-height: calc(100vh - 24px); overflow-y: auto; } .welcome-art { min-height: 0; height: clamp(190px,32vh,250px); } .language-art, .rules-art { min-height: 125px; } .welcome-art img { max-height: 100%; } .welcome-copy { padding: 22px; } .welcome-copy h2 { margin-bottom: 10px; font-size: 26px; } .welcome-copy p:not(.welcome-eyebrow) { font-size: 15px; line-height: 1.5; } .rules-copy ul { font-size: 13px; } .welcome-copy button { width: 100%; margin-top: 18px; } .language-actions { width: 100%; } .language-actions button { flex: 1; } .pallet-dialog { padding: 12px; } .pallet-card { max-height: calc(100vh - 24px); } .pallet-images { height: clamp(170px,30vh,230px); } .pallet-copy { padding: 16px; } .pallet-copy p:not(.welcome-eyebrow) { font-size: 14px; } .pallet-actions { flex-direction: column; } .pallet-actions button { width: 100%; } }
   </style>
 </head>
@@ -132,6 +151,7 @@
       <div class="actions">
         <button id="action"></button>
         <div id="choices" class="choices" hidden></div>
+        <button class="secondary" id="leaderboardResultOpen" type="button" hidden>🏆 View leaderboard</button>
       </div>
     </div>
   </main>
@@ -190,6 +210,7 @@
         <h2 id="courierDialogTitle">Choose a courier</h2>
         <p class="dialog-hint" id="courierDialogHint">Choose a name from the list or create a new courier.</p>
         <div class="courier-list" id="courierOptions"></div>
+        <button class="leaderboard-open" id="leaderboardOpen" type="button">🏆 View leaderboard</button>
       </div>
       <div class="courier-profile" id="courierProfile" hidden>
         <div class="profile-art"><img id="profileImage" src="" alt="Selected courier illustration"></div>
@@ -205,6 +226,17 @@
         <button class="secondary" id="cancelCourier" type="button">Cancel</button>
         <button id="confirmCourier" type="button">Continue</button>
       </div>
+    </section>
+  </div>
+  <div class="welcome-dialog leaderboard-dialog" id="leaderboardDialog" hidden>
+    <section class="leaderboard-card" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle" aria-describedby="leaderboardStatus">
+      <div class="leaderboard-top">
+        <div><p class="welcome-eyebrow" id="leaderboardEyebrow">COURIER CHALLENGE</p><h2 id="leaderboardTitle">Leaderboard</h2></div>
+        <button class="leaderboard-close-x" id="leaderboardCloseX" type="button" aria-label="Close">×</button>
+      </div>
+      <p class="leaderboard-status" id="leaderboardStatus" aria-live="polite"></p>
+      <ol class="leaderboard-entries" id="leaderboardEntries"></ol>
+      <div class="leaderboard-footer"><button id="leaderboardClose" type="button">Close</button></div>
     </section>
   </div>
   <div class="pallet-dialog" id="palletDialog" hidden>
@@ -306,12 +338,25 @@
     const profileNameLabel = document.querySelector('#profileNameLabel');
     const profileNameInput = document.querySelector('#profileNameInput');
     const courierIdentity = document.querySelector('#courierIdentity');
+    const leaderboardDialog = document.querySelector('#leaderboardDialog');
+    const leaderboardOpenButton = document.querySelector('#leaderboardOpen');
+    const leaderboardTitle = document.querySelector('#leaderboardTitle');
+    const leaderboardEyebrow = document.querySelector('#leaderboardEyebrow');
+    const leaderboardStatus = document.querySelector('#leaderboardStatus');
+    const leaderboardEntries = document.querySelector('#leaderboardEntries');
+    const leaderboardCloseButton = document.querySelector('#leaderboardClose');
+    const leaderboardCloseX = document.querySelector('#leaderboardCloseX');
+    const leaderboardResultOpen = document.querySelector('#leaderboardResultOpen');
     let selectedCourier = 0;
     let activeCourierName = couriers[selectedCourier].name;
+    const SUPABASE_URL = 'https://sjtgbqhirztfvnwairrx.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_T4J_phWQ1pgQCs8JSVBvjw_0BaaZR8E';
+    let leaderboardReturnTarget = 'courier';
     const translations = {
       de: {
         pageTitle:'Kurierroute — Spiel', gameTitle:'Kurier auf Tour', chooseCourier:'Kurier auswählen', packageCount:'8 Pakete', routeDuration:'2:30 für die ganze Tour',
         scoreLabel:'Punkte: {score}', complaintsLabel:'Beschwerden: {count}', routeTimeLabel:'Übrig: {time}', returnsLabel:'Retouren: {count}', progressLabel:'Stopps: {done}/{total} · übrig {remaining}',
+        leaderboardTitle:'Bestenliste', leaderboardEyebrow:'COURIER CHALLENGE', leaderboardButton:'🏆 Rangliste ansehen', leaderboardLoading:'Bestenliste wird geladen…', leaderboardEmpty:'Noch keine Ergebnisse. Spiele eine Runde, um den ersten Eintrag zu erstellen.', leaderboardError:'Die Bestenliste ist gerade nicht erreichbar. Bitte später erneut versuchen.', leaderboardClose:'Schließen', leaderboardPoints:'Punkte', leaderboardDetails:'{delivered}/8 zugestellt · {returns} Retouren · {time} übrig',
         secondsDelta:'{sign}{seconds} Sekunden', startPrompt:'Wähle deinen Kurier und starte die Tour.', startAction:'Tour starten',
         directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Willkommen in unserem Team!', directorMessage:'Guten Tag, ich heiße Andrej Koch. Ich bin Geschäftsführer der TKA GmbH. Willkommen in unserem Team! Arbeite verantwortungsbewusst, achte auf die Pakete und gute Fahrt!', okContinue:'OK, weiter', stampMessage:'Bitte kurz die Arbeitszeit stempeln — dann geht die Tour weiter.',
         languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Kurz erklärt', rulesTitle:'Das Ziel', rulesIntro:'Bring möglichst viele Pakete ans Ziel und sammle Punkte.',
@@ -333,6 +378,7 @@
       ro: {
         pageTitle:'Ruta curierului — joc', gameTitle:'Curierul pe traseu', chooseCourier:'Alege curierul', packageCount:'8 colete', routeDuration:'2:30 pentru tot traseul',
         scoreLabel:'Puncte: {score}', complaintsLabel:'Reclamații: {count}', routeTimeLabel:'Timp rămas: {time}', returnsLabel:'Retururi: {count}', progressLabel:'Opriri: {done}/{total} · rămase {remaining}',
+        leaderboardTitle:'Clasament', leaderboardEyebrow:'PROVOCAREA CURIERILOR', leaderboardButton:'🏆 Vezi clasamentul', leaderboardLoading:'Se încarcă clasamentul…', leaderboardEmpty:'Nu există încă rezultate. Joacă o rundă pentru primul rezultat.', leaderboardError:'Clasamentul nu este disponibil acum. Încearcă din nou mai târziu.', leaderboardClose:'Închide', leaderboardPoints:'puncte', leaderboardDetails:'{delivered}/8 livrate · {returns} retururi · {time} rămase',
         secondsDelta:'{sign}{seconds} secunde', startPrompt:'Alege curierul și pornește pe traseu.', startAction:'Începe traseul',
         directorEyebrow:'Andrej Koch · TKA GmbH', directorTitle:'Bine ai venit în echipa noastră!', directorMessage:'Bună ziua, mă numesc Andrej Koch. Sunt directorul companiei TKA GmbH. Bine ai venit în echipa noastră! Lucrează responsabil, ai grijă de colete și drum bun!', okContinue:'OK, continuă', stampMessage:'Înregistrează timpul de lucru, apoi continuă traseul.',
         languageTitle:'Bitte wählen Sie eine Sprache', languageHint:'Bitte wählen Sie Deutsch oder Rumänisch.', rulesEyebrow:'Pe scurt', rulesTitle:'Scopul jocului', rulesIntro:'Livrează cât mai multe colete și adună puncte.',
@@ -368,6 +414,8 @@
       rulesEyebrow.textContent=lang.rulesEyebrow;rulesTitle.textContent=lang.rulesTitle;rulesArtCaption.textContent=lang.rulesArtCaption;rulesIntro.textContent=lang.rulesIntro;rulesList.replaceChildren(...lang.rules.map(text=>{const item=document.createElement('li');item.textContent=text;return item;}));rulesOk.textContent=lang.rulesButton;
       document.querySelector('#directorEyebrow').textContent=lang.directorEyebrow;welcomeTitle.textContent=lang.directorTitle;welcomeMessage.textContent=lang.directorMessage;directorOk.textContent=lang.okContinue;
       stampMessage.textContent=lang.stampMessage;stampOk.textContent='OK';
+      leaderboardTitle.textContent=lang.leaderboardTitle;leaderboardEyebrow.textContent=lang.leaderboardEyebrow;leaderboardOpenButton.textContent=lang.leaderboardButton;leaderboardCloseButton.textContent=lang.leaderboardClose;leaderboardCloseX.setAttribute('aria-label',lang.leaderboardClose);
+      leaderboardResultOpen.textContent=lang.leaderboardButton;
       courierDialogTitle.textContent=lang.courierTitle;courierDialogHint.textContent=lang.courierHint;customCourierOptionLabel.textContent=lang.newCourier;profileEyebrow.textContent=lang.profileEyebrow;profileNameLabel.textContent=lang.profileLabel;profileNamePlaceholder.placeholder=lang.namePlaceholder;
       cancelCourier.textContent=lang.cancel;confirmCourier.textContent=lang.continue;
       palletTitle.textContent=lang.palletTitle;palletDescription.textContent=lang.palletDescription;palletBenefit.textContent=lang.palletBenefit;document.querySelector('.pallet-copy .welcome-eyebrow').textContent=lang.palletEyebrow;takePalletButton.textContent=lang.takePallet;skipPalletButton.textContent=lang.skipPallet;
@@ -383,7 +431,7 @@
     const ROUTE_TIME_LIMIT = 150;
     const ROUTE_MOTION_SECONDS = 105;
     const ROUTE_START_PAN = 100;
-    const game = { state: 'ready', x: 20, travel: 0, cityOffset: 0, travelStartPan: 0, travelTargetPan: 0, travelTotal: 0, travelDuration: 0, legElapsed: 0, score: 0, delivered: 0, returns: 0, complaints: 0, scenarios: [], person: 0, parcel: 0, stop: 0, last: 0, routeTime: 0, timeLeft: ROUTE_TIME_LIMIT, clockLast: 0, roadEventStops: new Set(), roadCorrectChoice: '', stampReminderShown: false };
+    const game = { state: 'ready', x: 20, travel: 0, cityOffset: 0, travelStartPan: 0, travelTargetPan: 0, travelTotal: 0, travelDuration: 0, legElapsed: 0, score: 0, delivered: 0, returns: 0, complaints: 0, scenarios: [], person: 0, parcel: 0, stop: 0, last: 0, routeTime: 0, timeLeft: ROUTE_TIME_LIMIT, clockLast: 0, roadEventStops: new Set(), roadCorrectChoice: '', stampReminderShown: false, leaderboardSubmitAttempted: false };
     let clientReactionTimer=0;
     let timeDeltaTimer=0;
     function refreshRouteProgress(){routeProgressLabel.textContent=tr('progressLabel',{done:Math.min(game.stop,STOP_COUNT),total:STOP_COUNT,remaining:Math.max(0,STOP_COUNT-game.stop)});}
@@ -530,6 +578,7 @@
     }
     function showAction(label, disabled=false) {
       action.hidden=false;action.disabled=disabled;action.textContent=label;
+      leaderboardResultOpen.hidden=true;
       choices.hidden=true;choices.replaceChildren();
     }
     function showChoices(options) {
@@ -576,6 +625,73 @@
       courierDialog.hidden=true;
       action.focus();
     }
+    function openLeaderboard(source='courier') {
+      leaderboardReturnTarget=source;
+      leaderboardDialog.hidden=false;
+      leaderboardEntries.replaceChildren();
+      leaderboardStatus.textContent=tr('leaderboardLoading');
+      leaderboardCloseButton.focus();
+      refreshLeaderboard(source);
+    }
+    function leaderboardHeaders(extra={}) {
+      return {apikey:SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,...extra};
+    }
+    async function refreshLeaderboard(source) {
+      try {
+        if(source==='finish'&&!game.leaderboardSubmitAttempted){
+          game.leaderboardSubmitAttempted=true;
+          const result={
+            player_name:activeCourierName,
+            courier_name:couriers[selectedCourier].custom?tr('newCourier'):couriers[selectedCourier].name,
+            score:Math.trunc(game.score),
+            delivered_count:Math.max(0,Math.min(STOP_COUNT,Math.trunc(game.delivered))),
+            return_count:Math.max(0,Math.min(STOP_COUNT,Math.trunc(game.returns))),
+            remaining_seconds:Math.max(0,Math.min(ROUTE_TIME_LIMIT,Math.floor(game.timeLeft)))
+          };
+          const save=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`,{
+            method:'POST',
+            headers:leaderboardHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),
+            body:JSON.stringify(result)
+          });
+          if(!save.ok)throw new Error(`save ${save.status}`);
+        }
+        const params=new URLSearchParams({
+          select:'player_name,courier_name,score,delivered_count,return_count,remaining_seconds,created_at',
+          order:'score.desc,delivered_count.desc,return_count.asc,remaining_seconds.desc,created_at.asc',
+          limit:'10'
+        });
+        const response=await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?${params}`,{headers:leaderboardHeaders()});
+        if(!response.ok)throw new Error(`read ${response.status}`);
+        const rows=await response.json();
+        leaderboardEntries.replaceChildren();
+        if(!rows.length){leaderboardStatus.textContent=tr('leaderboardEmpty');return;}
+        leaderboardStatus.textContent='';
+        rows.forEach((row,index)=>{
+          const item=document.createElement('li');item.className='leaderboard-entry';
+          const rank=document.createElement('span');rank.className='leaderboard-rank';rank.textContent=String(index+1);
+          const identity=document.createElement('span');identity.className='leaderboard-name';identity.textContent=row.player_name;
+          const detail=document.createElement('small');detail.className='leaderboard-detail';
+          detail.textContent=tr('leaderboardDetails',{delivered:row.delivered_count,returns:row.return_count,time:formatRouteTime(row.remaining_seconds)});
+          identity.append(detail);
+          const points=document.createElement('span');points.className='leaderboard-points';points.textContent=String(row.score);
+          const unit=document.createElement('small');unit.textContent=` ${tr('leaderboardPoints')}`;points.append(unit);
+          item.append(rank,identity,points);leaderboardEntries.append(item);
+        });
+      } catch(error) {
+        console.warn('Leaderboard request failed',error);
+        leaderboardStatus.textContent=tr('leaderboardError');
+      }
+    }
+    function closeLeaderboard() {
+      leaderboardDialog.hidden=true;
+      if(leaderboardReturnTarget==='courier'&&!courierDialog.hidden)leaderboardOpenButton.focus();
+      else if(game.state==='done')leaderboardResultOpen.focus();
+      else action.focus();
+    }
+    leaderboardOpenButton.addEventListener('click',()=>openLeaderboard('courier'));
+    leaderboardResultOpen.addEventListener('click',()=>openLeaderboard('result'));
+    leaderboardCloseButton.addEventListener('click',closeLeaderboard);
+    leaderboardCloseX.addEventListener('click',closeLeaderboard);
     languageButtons.forEach(button=>button.addEventListener('click',()=>{
       currentLanguage=button.dataset.language;
       applyLanguage();
@@ -666,7 +782,7 @@
     function begin(takesBaxter=false) {
       const baxterPoints=takesBaxter?20:0;
       const baxterTimePenalty=takesBaxter?15:0;
-      game.score=baxterPoints;game.delivered=0;game.returns=0;game.complaints=0;game.scoreDelta=baxterPoints;game.stop=0;game.stampReminderShown=false;game.x=20;game.travel=0;game.cityOffset=ROUTE_START_PAN;game.travelTotal=0;game.legElapsed=0;game.packageAtDoor=false;game.routeTime=baxterTimePenalty;game.timeLeft=ROUTE_TIME_LIMIT-baxterTimePenalty;game.clockLast=performance.now();
+      game.score=baxterPoints;game.delivered=0;game.returns=0;game.complaints=0;game.scoreDelta=baxterPoints;game.stop=0;game.stampReminderShown=false;game.leaderboardSubmitAttempted=false;game.x=20;game.travel=0;game.cityOffset=ROUTE_START_PAN;game.travelTotal=0;game.legElapsed=0;game.packageAtDoor=false;game.routeTime=baxterTimePenalty;game.timeLeft=ROUTE_TIME_LIMIT-baxterTimePenalty;game.clockLast=performance.now();
       clearTimeout(timeDeltaTimer);timeDeltaLabel.hidden=true;refreshRouteProgress();
       if(takesBaxter){game.scorePop=tr('initialBaxterScore');game.popUntil=performance.now()+1600;}else{game.popUntil=0;}
       const trafficCandidates=[1,2,3,4,5,6];
@@ -802,6 +918,8 @@
         ? tr('timeOut',{name:activeCourierName,delivered:game.delivered,total:STOP_COUNT,returns:game.returns,score:game.score})
         : tr('routeDone',{name:activeCourierName,delivered:game.delivered,total:STOP_COUNT,returns:game.returns,complaints:game.complaints,score:game.score,time:formatRouteTime(game.routeTime)});
       showAction(tr('playAgain'));
+      leaderboardResultOpen.hidden=false;
+      openLeaderboard('finish');
     }
     function deliver() {
       if(game.state==='ready'||game.state==='done'){directorDialog.hidden=false;directorOk.focus();}
@@ -809,6 +927,7 @@
     action.addEventListener('click',deliver);
     window.addEventListener('keydown',e=>{
       if(!languageDialog.hidden)return;
+      if(!leaderboardDialog.hidden){if(e.key==='Escape')closeLeaderboard();return;}
       if(!rulesDialog.hidden){if(e.key==='Enter'){e.preventDefault();rulesOk.click();}return;}
       if(!palletDialog.hidden)return;
       if(!stampDialog.hidden){if(e.key==='Enter'){e.preventDefault();stampOk.click();}return;}
