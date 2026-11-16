@@ -652,7 +652,7 @@
           const save=await fetch(`${SUPABASE_URL}/rest/v1/rpc/submit_best_score`,{
             method:'POST',
             headers:leaderboardHeaders({'Content-Type':'application/json',Prefer:'return=minimal'}),
-            body:JSON.stringify({p_player_name:result.player_name,p_courier_name:(eventType==='visit'||eventType==='language_selected')?null:result.courier_name,p_score:result.score,p_delivered_count:result.delivered_count,p_return_count:result.return_count,p_remaining_seconds:result.remaining_seconds})
+            body:JSON.stringify({p_player_name:result.player_name,p_courier_name:result.courier_name,p_score:result.score,p_delivered_count:result.delivered_count,p_return_count:result.return_count,p_remaining_seconds:result.remaining_seconds})
           });
           if(!save.ok)throw new Error(`save ${save.status}`);
         }
